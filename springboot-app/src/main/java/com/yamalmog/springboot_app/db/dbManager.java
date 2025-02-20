@@ -68,13 +68,16 @@ public class dbManager {
 
 
     // ---------------- General helper methods ----------------
-    
+    public Integer check_if_id_exist(int id, String table_name){
+        String check_query = String.format("SELECT COUNT(*) FROM %s WHERE id = ?", table_name);
+        Integer count_on_given_id = jdbcTemplate.queryForObject(check_query, Integer.class, id);
+        return count_on_given_id;
+    }
 
     // ----------------------- Book Methods -------------------
     // Add new book
     public void addBook(Book book){
-        String check_query = "SELECT COUNT(*) FROM books WHERE id = ?";
-        Integer count_on_book_id = jdbcTemplate.queryForObject(check_query, Integer.class, book.getId());
+        Integer count_on_book_id = check_if_id_exist(book.getId(), "books");
 
         if (count_on_book_id != null && count_on_book_id > 0) {
             throw new BooksAppException(BooksAppException.ErrorType.BOOK_ID_ALREADY_EXIST, "Book With Id: "+ book.getId() + " already exists.");
@@ -106,11 +109,11 @@ public class dbManager {
         jdbcTemplate.update(query, book_id);
     }
     
+    
     // ----------------------- User Methods -------------------
     // Add new user
     public void addUser(User user){
-        String search_user_by_id = "SELECT * FROM users WHERE id = ?";
-        Integer count_on_user_id = jdbcTemplate.queryForObject(search_user_by_id, Integer.class, user.getId());
+        Integer count_on_user_id = check_if_id_exist(user.getId(), "users");
     
         if(count_on_user_id != null && count_on_user_id > 0){
             throw new UserAppException(UserAppException.ErrorType.USER_ID_ALREADY_EXIST, "User with Id: " + user.getId()+ " already exists.");
@@ -126,13 +129,19 @@ public class dbManager {
     }
 
     // Get a specific user
-    public User getUserById(int id){
-        String check_query
+    public User getUserById(int user_id){
+        String get_user_query = "SELECT * FROM users WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(get_user_query, new BeanPropertyRowMapper<>(User.class), user_id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new UserAppException(UserAppException.ErrorType.USER_NOT_FOUND, "User with Id: " + user_id + " does not exist.");
+        }
     }
 
     // Delete user
-    public void deleteUser(int id){
-
+    public void deleteUser(int user_id){
+        String delete_user_query = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(delete_user_query, user_id);
     }
 
 }

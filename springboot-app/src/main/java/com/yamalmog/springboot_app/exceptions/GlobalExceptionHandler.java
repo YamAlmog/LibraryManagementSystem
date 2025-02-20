@@ -12,21 +12,37 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     
+    // Handle Book-related exception
     @ExceptionHandler(BooksAppException.class)
     public ResponseEntity<Map<String, String>> handleBookAppException(BooksAppException ex) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
-        errorResponse.put("errorType", ex.getErrorType().name());
+        return buildErrorResponse(ex.getErrorType().name(), ex.getMessage(), getHttpStatus(ex.getErrorType()));
+    }
 
-        return ResponseEntity
-            .status(getHttpStatus(ex.getErrorType()))
-            .body(errorResponse);
+    // Handle User-related exception
+    @ExceptionHandler(UserAppException.class)
+    public ResponseEntity<Map<String, String>> handleUserAppException(UserAppException ex) {
+        return buildErrorResponse(ex.getErrorType().name(), ex.getMessage(), getHttpStatus(ex.getErrorType()));
+    }
+
+    // Common method to build response
+    private ResponseEntity<Map<String, String>> buildErrorResponse(String errorType, String message, HttpStatus status) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", message);
+        errorResponse.put("errorType", errorType);
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     private HttpStatus getHttpStatus(BooksAppException.ErrorType errorType) {
         return switch (errorType) {
             case BOOK_ID_ALREADY_EXIST -> HttpStatus.CONFLICT; // 409 Conflict
             case BOOK_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404 Not Found
+        };
+    }
+
+    private HttpStatus getHttpStatus(UserAppException.ErrorType errorType) {
+        return switch (errorType) {
+            case USER_ID_ALREADY_EXIST -> HttpStatus.CONFLICT; // 409 Conflict
+            case USER_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404 Not Found
         };
     }
 

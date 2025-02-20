@@ -1,9 +1,8 @@
 package com.yamalmog.springboot_app.services;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import com.yamalmog.springboot_app.db.dbManager;
 import com.yamalmog.springboot_app.models.Book;
 
@@ -25,11 +24,11 @@ public class BookService {
         return dbManager.getAllBooks();
     }
 
-    public Book getBookById(int id){
-        return dbManager.GetSpecificBook(id);
+    public Book getBookById(int book_id){
+        return dbManager.GetSpecificBook(book_id);
     }
 
-    public void deleteBook(int id){
-        dbManager.deleteBook(id);
+    public void deleteBook(int book_id){
+        dbManager.deleteBook(book_id);
     }
 }

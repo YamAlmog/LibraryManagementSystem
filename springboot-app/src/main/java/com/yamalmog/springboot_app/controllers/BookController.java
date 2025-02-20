@@ -1,7 +1,6 @@
 package com.yamalmog.springboot_app.controllers;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import com.yamalmog.springboot_app.services.BookService;
 @RequestMapping("/books") // API base path: /books
 public class BookController {
     
-    private BookService bookService;
+    private final BookService bookService;
 
     @Autowired
     public BookController(BookService bookService){
