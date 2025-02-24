@@ -1,30 +1,60 @@
 package com.yamalmog.springboot_app.models;
 
+
 import java.time.LocalDateTime;
 
+
 public class Transaction {
+    
     private int id;
     private int bookId;
     private int userId;
-    private LocalDateTime transactionTimeStemp;
+    private String status;
+    private LocalDateTime transactionDate;
 
-    public Transaction(int transaction_id, int book_id, int user_id){
-        this.id = transaction_id;
-        this.bookId = book_id;
-        this.userId = user_id;
-        this.transactionTimeStemp = LocalDateTime.now();
+    // Default constructor (for JSON deserialization)
+    public Transaction() {}
+
+    public Transaction(int bookId, int userId, String status){
+        this.bookId = bookId;
+        this.userId = userId;
+        this.status = status;
+        this.transactionDate = LocalDateTime.now();  // Current timestamp
     }
     
+    // Getters and Setters
     public int getId(){
         return id;
     }
+    public void setId(int id){
+        this.id = id;
+    }
+
     public int getBookId(){
         return bookId;
     }
+    public void setBookId(int bookId){
+        this.bookId = bookId;
+    }
+
     public int getUserId(){
         return userId;
     }
-    public LocalDateTime getTransactionTimeStemp(){
-        return transactionTimeStemp;
+    public void setUserId(int userId){
+        this.userId = userId;
+    }
+
+    public String getStatus(){
+        return status;
+    }
+    public void setStatus(String status){
+        this.status = status;
+    }
+
+    public LocalDateTime getTransactionDate(){
+        return transactionDate;
+    }
+    public void setTransactionDate(LocalDateTime transactionDate){
+        this.transactionDate = transactionDate;
     }
 }

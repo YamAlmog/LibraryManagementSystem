@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.yamalmog.springboot_app.models.Book;
+import com.yamalmog.springboot_app.models.Transaction;
 import com.yamalmog.springboot_app.models.User;
 
 @Component
@@ -56,13 +57,13 @@ public class dbManager {
     private void createTransactionsTable() {
         String sql = """
             CREATE TABLE IF NOT EXISTS transactions (
-                id INT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 book_id INT NOT NULL,
                 user_id INT NOT NULL,
-                status VARCHAR(255),
+                status VARCHAR(255) NOT NULL,
                 transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id),
-                CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id));""";
+                CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE);""";
         jdbcTemplate.execute(sql);
     }
 
@@ -109,7 +110,7 @@ public class dbManager {
         jdbcTemplate.update(query, book_id);
     }
     
-    
+
     // ----------------------- User Methods -------------------
     // Add new user
     public void addUser(User user){
@@ -143,5 +144,8 @@ public class dbManager {
         String delete_user_query = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(delete_user_query, user_id);
     }
+
+
+
 
 }

@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getErrorType().name(), ex.getMessage(), getHttpStatus(ex.getErrorType()));
     }
 
+
     // Common method to build response
     private ResponseEntity<Map<String, String>> buildErrorResponse(String errorType, String message, HttpStatus status) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
         return switch (errorType) {
             case BOOK_ID_ALREADY_EXIST -> HttpStatus.CONFLICT; // 409 Conflict
             case BOOK_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404 Not Found
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }
 
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler {
         return switch (errorType) {
             case USER_ID_ALREADY_EXIST -> HttpStatus.CONFLICT; // 409 Conflict
             case USER_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404 Not Found
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }
 

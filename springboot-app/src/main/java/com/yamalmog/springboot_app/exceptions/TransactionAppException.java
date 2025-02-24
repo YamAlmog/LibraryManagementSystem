@@ -1,10 +1,11 @@
 package com.yamalmog.springboot_app.exceptions;
 
 
-public class UserAppException extends RuntimeException{
+public class TransactionAppException extends RuntimeException {
     private final ErrorType errorType;
+    
 
-    public UserAppException(ErrorType errorType, String message){
+    public TransactionAppException(ErrorType errorType, String message){
         super(message);
         this.errorType = errorType;
     }
@@ -13,8 +14,8 @@ public class UserAppException extends RuntimeException{
         return errorType;
     }
 
-    public enum ErrorType{
-        USER_ID_ALREADY_EXIST,
-        USER_NOT_FOUND, BOOK_NOT_FOUND
+    public enum ErrorType {
+        BOOK_NOT_FOUND,
+        USER_NOT_FOUND
     }
 }
