@@ -60,7 +60,7 @@ public class dbManager {
                 id SERIAL PRIMARY KEY,
                 book_id INT NOT NULL,
                 user_id INT NOT NULL,
-                status VARCHAR(255) NOT NULL,
+                status VARCHAR(10) CHECK (status IN ('borrow', 'return')),
                 transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
                 CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE);""";
@@ -73,6 +73,12 @@ public class dbManager {
         String check_query = String.format("SELECT COUNT(*) FROM %s WHERE id = ?", table_name);
         Integer count_on_given_id = jdbcTemplate.queryForObject(check_query, Integer.class, id);
         return count_on_given_id;
+    }
+
+    public boolean check_if_book_available(int bookId){
+        String check_availability = String.format("SELECT is_available FROM books WHERE id = ?");
+        return jdbcTemplate.queryForObject(check_availability, boolean.class, bookId);
+         
     }
 
     // ----------------------- Book Methods -------------------

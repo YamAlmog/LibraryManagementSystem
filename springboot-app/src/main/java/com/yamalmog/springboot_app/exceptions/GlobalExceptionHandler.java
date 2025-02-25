@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getErrorType().name(), ex.getMessage(), getHttpStatus(ex.getErrorType()));
     }
 
+    // Handle User-related exception
+    @ExceptionHandler(TransactionAppException.class)
+    public ResponseEntity<Map<String, String>> handleTransactionAppException(TransactionAppException ex) {
+        return buildErrorResponse(ex.getErrorType().name(), ex.getMessage(), getHttpStatus(ex.getErrorType()));
+    }
 
     // Common method to build response
     private ResponseEntity<Map<String, String>> buildErrorResponse(String errorType, String message, HttpStatus status) {
@@ -45,6 +50,13 @@ public class GlobalExceptionHandler {
         return switch (errorType) {
             case USER_ID_ALREADY_EXIST -> HttpStatus.CONFLICT; // 409 Conflict
             case USER_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404 Not Found
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
+    }
+
+    private HttpStatus getHttpStatus(TransactionAppException.ErrorType errorType) {
+        return switch (errorType) {
+            case UNAVAILABLE_BOOK -> HttpStatus.CONFLICT; // 409 Conflict
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }

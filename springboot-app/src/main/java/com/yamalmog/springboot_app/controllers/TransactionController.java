@@ -1,6 +1,7 @@
 package com.yamalmog.springboot_app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.yamalmog.springboot_app.services.TransactionService;
 import com.yamalmog.springboot_app.models.Transaction;
@@ -19,8 +20,8 @@ public class TransactionController {
     }
 
     @PostMapping
-    public void addTransaction(@RequestBody Transaction transaction){
-        transactionService.addTransaction(transaction);
+    public ResponseEntity<String> addTransaction(@RequestBody Transaction transaction){
+        return transactionService.addTransaction(transaction);
     }
 
     @GetMapping

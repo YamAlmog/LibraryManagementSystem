@@ -15,7 +15,6 @@ public class TransactionAppException extends RuntimeException {
     }
 
     public enum ErrorType {
-        BOOK_NOT_FOUND,
-        USER_NOT_FOUND
+        UNAVAILABLE_BOOK,
     }
 }
