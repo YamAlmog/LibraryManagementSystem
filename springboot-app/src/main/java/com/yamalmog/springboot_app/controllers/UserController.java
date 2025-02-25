@@ -1,6 +1,7 @@
 package com.yamalmog.springboot_app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PostMapping
-    public void addUser(@RequestBody User user){
-        userService.addUser(user);
+    public ResponseEntity<String> addUser(@RequestBody User user){
+        return userService.addUser(user);
     }
     
     @GetMapping("/{id}")
@@ -39,9 +40,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable int id){
-        userService.deleteUser(id);
+    public ResponseEntity<String> deleteUser(@PathVariable int id){
+        return userService.deleteUser(id);
     }
-
 
 }

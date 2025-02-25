@@ -80,41 +80,6 @@ public class dbManager {
         return jdbcTemplate.queryForObject(check_availability, boolean.class, bookId);
          
     }
-
-    // ----------------------- Book Methods -------------------
-    // Add new book
-    public void addBook(Book book){
-        Integer count_on_book_id = check_if_id_exist(book.getId(), "books");
-
-        if (count_on_book_id != null && count_on_book_id > 0) {
-            throw new BooksAppException(BooksAppException.ErrorType.BOOK_ID_ALREADY_EXIST, "Book With Id: "+ book.getId() + " already exists.");
-        }
-
-        String query = "INSERT INTO books(id, title, author, is_available) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(query, book.getId(), book.getTitle(), book.getAuthor(), book.isAvailable());
-    }
-
-    // Get all books
-    public List<Book> getAllBooks(){
-        String query = "SELECT * FROM books";
-        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Book.class));
-    }
-
-    // Get specific book
-    public Book GetSpecificBook(int book_id){
-        String query = "SELECT * FROM books WHERE id = ?";
-        try {
-            return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Book.class), book_id); //BeanPropertyRowMapper simplifies the process of mapping rows of a ResultSet to Java beans.
-        } catch (EmptyResultDataAccessException e) {
-            throw new BooksAppException(BooksAppException.ErrorType.BOOK_NOT_FOUND, "Book With Id: "+ book_id + " does not exist.");
-        }       
-    }
-
-    // Delete a book
-    public void deleteBook(int book_id){
-        String query = "DELETE FROM books WHERE id = ?";
-        jdbcTemplate.update(query, book_id);
-    }
     
 
     // ----------------------- User Methods -------------------
