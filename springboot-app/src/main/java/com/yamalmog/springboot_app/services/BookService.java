@@ -58,7 +58,7 @@ public class BookService {
     public ResponseEntity<String> deleteBook(int book_id){
         String query = "DELETE FROM books WHERE id = ?";
         jdbcTemplate.update(query, book_id);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Book with id: " + book_id + " has been deleted.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Book with id: " + book_id + " has been deleted.");
     }
     
 }

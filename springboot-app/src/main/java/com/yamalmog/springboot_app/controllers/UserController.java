@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yamalmog.springboot_app.services.UserService;
 import com.yamalmog.springboot_app.models.User;
+
 import java.util.List;
+
 import org.springframework.web.bind.annotation.PathVariable;
+
+import io.micrometer.core.ipc.http.HttpSender;
 
 @RestController
 @RequestMapping("/users")
@@ -35,8 +39,9 @@ public class UserController {
     }
     
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id){
-        return userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable int id){
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")

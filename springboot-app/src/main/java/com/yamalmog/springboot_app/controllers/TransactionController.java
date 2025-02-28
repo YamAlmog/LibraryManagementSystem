@@ -3,9 +3,13 @@ package com.yamalmog.springboot_app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import com.yamalmog.springboot_app.services.TransactionService;
 import com.yamalmog.springboot_app.models.Transaction;
+
 import java.util.List;
+
+import io.micrometer.core.ipc.http.HttpSender;
 
 
 
@@ -30,13 +34,15 @@ public class TransactionController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Transaction> getTransactionByUserId(@PathVariable int userId){
-        return transactionService.getTransactionsByUser(userId);
+    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable int userId){
+        List<Transaction> transactions = transactionService.getTransactionsByUser(userId);
+        return ResponseEntity.ok(transactions);
     }
 
     @GetMapping("/book/{bookId}")
-    public List<Transaction> getTransactionByBookId(@PathVariable int bookId){
-        return transactionService.getTransactionsByBook(bookId);
+    public ResponseEntity<List<Transaction>> getTransactionByBookId(@PathVariable int bookId){
+        List<Transaction> transactions =  transactionService.getTransactionsByBook(bookId);
+        return ResponseEntity.ok(transactions);
     }
 
     

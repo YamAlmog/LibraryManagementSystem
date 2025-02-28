@@ -16,5 +16,6 @@ public class TransactionAppException extends RuntimeException {
 
     public enum ErrorType {
         UNAVAILABLE_BOOK,
+        WRONG_STATUS
     }
 }

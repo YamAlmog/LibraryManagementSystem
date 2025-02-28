@@ -59,7 +59,7 @@ public class UserService {
     public ResponseEntity<String> deleteUser(int user_id){
         String delete_user_query = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(delete_user_query, user_id);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User with id: " + user_id + " has been deleted.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User with id: " + user_id + " has been deleted.");
     }
 
 }

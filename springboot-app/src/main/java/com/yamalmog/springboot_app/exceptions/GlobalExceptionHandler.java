@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.micrometer.core.ipc.http.HttpSender;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,6 +59,7 @@ public class GlobalExceptionHandler {
     private HttpStatus getHttpStatus(TransactionAppException.ErrorType errorType) {
         return switch (errorType) {
             case UNAVAILABLE_BOOK -> HttpStatus.CONFLICT; // 409 Conflict
+            case WRONG_STATUS -> HttpStatus.BAD_REQUEST;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }

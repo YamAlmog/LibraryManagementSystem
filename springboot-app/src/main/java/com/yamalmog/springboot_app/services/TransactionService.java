@@ -48,7 +48,7 @@ public class TransactionService{
                 throw new UserAppException(UserAppException.ErrorType.USER_NOT_FOUND, "User With Id: "+ userId + " does not exist.");
             }
             if (!status.equals("borrow") && !status.equals("return")) {
-                return ResponseEntity.badRequest().body("Invalid status. Must be 'borrow' or 'return'.");
+                throw new TransactionAppException(TransactionAppException.ErrorType.WRONG_STATUS, "Invalid status: " + status + " Must be 'borrow' or 'return'.");
             }
 
             // Check if the book is available before borrowing
@@ -64,7 +64,7 @@ public class TransactionService{
             boolean newAvailability = switch (status) {
                 case "borrow" -> false;
                 case "return" -> true;
-                default -> throw new IllegalArgumentException("Invalid status: " + status);
+                default -> throw new TransactionAppException(TransactionAppException.ErrorType.WRONG_STATUS, "Invalid status: " + status);
 
             };
             jdbcTemplate.update(update_book_query, newAvailability, bookId);
@@ -74,7 +74,16 @@ public class TransactionService{
         } catch (BooksAppException | UserAppException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (TransactionAppException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            HttpStatus status_code = null;
+            // Set appropriate status based on the error type
+            if (e.getErrorType() == TransactionAppException.ErrorType.UNAVAILABLE_BOOK) {
+                status_code = HttpStatus.CONFLICT;  // 409 Conflict
+            } else if (e.getErrorType() == TransactionAppException.ErrorType.WRONG_STATUS) {
+                status_code = HttpStatus.BAD_REQUEST;  // 400 Bad Request
+            } else {
+                status_code = HttpStatus.INTERNAL_SERVER_ERROR;  // Default fallback
+            }
+            return ResponseEntity.status(status_code).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing transaction.");
         }
@@ -98,7 +107,7 @@ public class TransactionService{
         }
     }
 
-    
+
     // Get all transactions for a specific book
     public List<Transaction> getTransactionsByBook(int bookId) {
         String get_by_book_query = "SELECT * FROM transactions WHERE book_id = ?";
