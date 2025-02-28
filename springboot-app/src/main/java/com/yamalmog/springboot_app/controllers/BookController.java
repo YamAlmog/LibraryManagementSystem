@@ -1,8 +1,8 @@
 package com.yamalmog.springboot_app.controllers;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ import com.yamalmog.springboot_app.services.BookService;
 @RequestMapping("/books") // API base path: /books
 public class BookController {
     
-    private BookService bookService;
+    private final BookService bookService;
 
     @Autowired
     public BookController(BookService bookService){
@@ -32,18 +32,19 @@ public class BookController {
     }
 
     @PostMapping
-    public void addBook(@RequestBody Book book){
-        bookService.addBook(book);
+    public ResponseEntity<String> addBook(@RequestBody Book book){
+        return bookService.addBook(book);
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable int id){
-        return bookService.getBookById(id);
+    public ResponseEntity<Book> getBookById(@PathVariable int id){
+        Book book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable int id){
-        bookService.deleteBook(id);
+    public ResponseEntity<String> deleteBook(@PathVariable int id){
+        return bookService.deleteBook(id);
     }
     
 }

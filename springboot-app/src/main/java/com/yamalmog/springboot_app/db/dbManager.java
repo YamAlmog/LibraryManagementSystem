@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.yamalmog.springboot_app.models.Book;
+import com.yamalmog.springboot_app.models.Transaction;
 import com.yamalmog.springboot_app.models.User;
 
 @Component
@@ -56,61 +57,35 @@ public class dbManager {
     private void createTransactionsTable() {
         String sql = """
             CREATE TABLE IF NOT EXISTS transactions (
-                id INT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 book_id INT NOT NULL,
                 user_id INT NOT NULL,
-                status VARCHAR(255),
+                status VARCHAR(10) CHECK (status IN ('borrow', 'return')),
                 transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id),
-                CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id));""";
+                CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE);""";
         jdbcTemplate.execute(sql);
     }
 
 
     // ---------------- General helper methods ----------------
-    
-
-    // ----------------------- Book Methods -------------------
-    // Add new book
-    public void addBook(Book book){
-        String check_query = "SELECT COUNT(*) FROM books WHERE id = ?";
-        Integer count_on_book_id = jdbcTemplate.queryForObject(check_query, Integer.class, book.getId());
-
-        if (count_on_book_id != null && count_on_book_id > 0) {
-            throw new BooksAppException(BooksAppException.ErrorType.BOOK_ID_ALREADY_EXIST, "Book With Id: "+ book.getId() + " already exists.");
-        }
-
-        String query = "INSERT INTO books(id, title, author, is_available) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(query, book.getId(), book.getTitle(), book.getAuthor(), book.isAvailable());
+    public Integer check_if_id_exist(int id, String table_name){
+        String check_query = String.format("SELECT COUNT(*) FROM %s WHERE id = ?", table_name);
+        Integer count_on_given_id = jdbcTemplate.queryForObject(check_query, Integer.class, id);
+        return count_on_given_id;
     }
 
-    // Get all books
-    public List<Book> getAllBooks(){
-        String query = "SELECT * FROM books";
-        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Book.class));
-    }
-
-    // Get specific book
-    public Book GetSpecificBook(int book_id){
-        String query = "SELECT * FROM books WHERE id = ?";
-        try {
-            return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Book.class), book_id); //BeanPropertyRowMapper simplifies the process of mapping rows of a ResultSet to Java beans.
-        } catch (EmptyResultDataAccessException e) {
-            throw new BooksAppException(BooksAppException.ErrorType.BOOK_NOT_FOUND, "Book With Id: "+ book_id + " does not exist.");
-        }       
-    }
-
-    // Delete a book
-    public void deleteBook(int book_id){
-        String query = "DELETE FROM books WHERE id = ?";
-        jdbcTemplate.update(query, book_id);
+    public boolean check_if_book_available(int bookId){
+        String check_availability = String.format("SELECT is_available FROM books WHERE id = ?");
+        return jdbcTemplate.queryForObject(check_availability, boolean.class, bookId);
+         
     }
     
+
     // ----------------------- User Methods -------------------
     // Add new user
     public void addUser(User user){
-        String search_user_by_id = "SELECT * FROM users WHERE id = ?";
-        Integer count_on_user_id = jdbcTemplate.queryForObject(search_user_by_id, Integer.class, user.getId());
+        Integer count_on_user_id = check_if_id_exist(user.getId(), "users");
     
         if(count_on_user_id != null && count_on_user_id > 0){
             throw new UserAppException(UserAppException.ErrorType.USER_ID_ALREADY_EXIST, "User with Id: " + user.getId()+ " already exists.");
@@ -126,13 +101,22 @@ public class dbManager {
     }
 
     // Get a specific user
-    public User getUserById(int id){
-        String check_query
+    public User getUserById(int user_id){
+        String get_user_query = "SELECT * FROM users WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(get_user_query, new BeanPropertyRowMapper<>(User.class), user_id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new UserAppException(UserAppException.ErrorType.USER_NOT_FOUND, "User with Id: " + user_id + " does not exist.");
+        }
     }
 
     // Delete user
-    public void deleteUser(int id){
-
+    public void deleteUser(int user_id){
+        String delete_user_query = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(delete_user_query, user_id);
     }
+
+
+
 
 }

@@ -5,18 +5,29 @@ public class User {
     private String name;
     private String email;
 
-    public User(int user_id, String user_name, String user_email){
-        this.id = user_id;
-        this.name = user_name;
-        this.email = user_email;
+    // Default constructor (for JSON deserialization)
+    public User() {}
+
+    public User(int id, String name, String email){
+        this.id = id;
+        this.name = name;
+        this.email = email;
     }
 
     public int getId(){
         return id;
     }
+    public void setId(int id){
+        this.id = id;
+    }
+
     public String getName(){
         return name;
     }
+    public void setName(String name){
+        this.name = name;
+    }
+
     public String getEmail(){
         return email;
     }
